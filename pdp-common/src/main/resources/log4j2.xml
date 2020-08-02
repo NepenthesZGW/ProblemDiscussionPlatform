@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration status="warn" monitorInterval="1800">
+    <!-- 全局属性配置  -->
+    <Properties>
+
+        <!-- info debug trace 日志级别共用属性配置 ↓ -->
+        <property name="simple_pattern">%d{yyyy-MM-dd HH:mm:ss} [%-5p] [%t] %c -- %m%n</property>
+        <property name="simple_log_dir">F:/test/logs/simple</property>
+        <!-- info debug trace 日志级别共用属性配置 ↑ -->
+
+
+        <!-- error 日志级别共用属性配置 ↓ -->
+        <property name="error_pattern">%d{yyyy-MM-dd HH:mm:ss} [%-5p] [%t] %l -- %m%n</property>
+        <property name="error_log_dir">F:/test/logs/error</property>
+        <!-- error 日志级别共用属性配置 ↑ -->
+
+        <!-- warn 日志级别共用属性配置 ↓ -->
+        <property name="warn_pattern">%d{yyyy-MM-dd HH:mm:ss} [%-5p] [%t] %l -- %m%n</property>
+        <property name="warn_log_dir">F:/test/logs/warn</property>
+        <!-- warn 日志级别共用属性配置 ↑ -->
+
+    </Properties>
+
+    <Appenders>
+
+        <!-- ===================info debug trace 级别  ↓===================  -->
+        <Console name="simple_console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${simple_pattern}"></PatternLayout>
+            <Filters>
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </Console>
+
+        <Routing name="simple_Routing">
+            <Routes pattern="$${thread:threadName}">
+                <Route>
+                    <RollingFile name="rollingFile-${thread:threadName}"
+                                 fileName="${simple_log_dir}/${thread:threadName}.log"
+                                 filePattern="${simple_log_dir}/$${date:yyyy-MM-dd}/${thread:threadName}=%d{yyyy-MM-dd-HH}=%i.log" >
+                        <!-- appender的日志级别过滤器 -->
+                        <Filters>
+                            <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL"/>
+                            <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+                        </Filters>
+
+                        <PatternLayout pattern="${simple_pattern}"></PatternLayout>
+                        <Policies>
+                            <!-- 系统启动时就触发 日志拆分规则，生成一个日志文件 -->
+<!--                            <OnStartupTriggeringPolicy></OnStartupTriggeringPolicy>-->
+                            <!-- 每个日志文件的最大大小为50 mb -->
+                            <SizeBasedTriggeringPolicy size="50 MB"></SizeBasedTriggeringPolicy>
+                            <!-- 按给定的时间节点进行拆分  -->
+                            <TimeBasedTriggeringPolicy  interval="12"></TimeBasedTriggeringPolicy>
+                        </Policies>
+                        <!-- 同一个目录下，文件个数不超过100个，超过会按照时间老的进行覆盖 -->
+                        <DefaultRolloverStrategy max="100"></DefaultRolloverStrategy>
+                    </RollingFile>
+                </Route>
+            </Routes>
+        </Routing>
+
+
+        <!-- ===================info debug trace 级别  ↑===================  -->
+
+        <!-- ===================== error 级别 ↓============================== -->
+        <Console name="error_console" target="SYSTEM_ERR">
+            <PatternLayout pattern="${error_pattern}"></PatternLayout>
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+        </Console>
+
+        <Routing name="error_Routing">
+            <Routes pattern="$${thread:threadName}">
+                <Route>
+                    <RollingFile name="rollingFile-${thread:threadName}"
+                                 fileName="${error_log_dir}/${thread:threadName}.log"
+                                 filePattern="${error_log_dir}/$${date:yyyy-MM-dd}/${thread:threadName}=%d{yyyy-MM-dd-HH}=%i.log" >
+                        <!-- appender的日志级别过滤器 -->
+                        <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+                        <PatternLayout pattern="${error_pattern}"></PatternLayout>
+                        <Policies>
+                            <!-- 系统启动时就触发 日志拆分规则，生成一个日志文件,这个看需求 -->
+<!--                            <OnStartupTriggeringPolicy></OnStartupTriggeringPolicy>-->
+                            <!-- 每个日志文件的最大大小为50 mb -->
+                            <SizeBasedTriggeringPolicy size="50 MB"></SizeBasedTriggeringPolicy>
+                            <!--
+                            按给定的时间节点进行拆分 这里的12是根据上面的filePattern的级别来定
+                            例如：%d{yyyy-MM-dd-HH} 那么这里的12就表示12个小时生成一个新文件
+                             -->
+                            <TimeBasedTriggeringPolicy interval="12"></TimeBasedTriggeringPolicy>
+                        </Policies>
+
+                        <!-- 同一个目录下，文件个数不超过100个，超过会按照时间老的进行覆盖 -->
+                        <DefaultRolloverStrategy max="100"></DefaultRolloverStrategy>
+                    </RollingFile>
+                </Route>
+            </Routes>
+        </Routing>
+
+
+
+        <!-- ===================== error 级别 ↑============================== -->
+
+
+        <!-- ===================== warn 级别 ↓============================== -->
+
+
+        <Console name="warn_console" target="SYSTEM_ERR">
+            <PatternLayout pattern="${warn_pattern}"></PatternLayout>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </Console>
+
+        <Routing name="warn_Routing">
+            <Routes pattern="$${thread:threadName}">
+                <Route>
+                    <RollingFile name="rollingFile-${thread:threadName}"
+                                 fileName="${warn_log_dir}/${thread:threadName}.log"
+                                 filePattern="${warn_log_dir}/$${date:yyyy-MM-dd}/${thread:threadName}=%d{yyyy-MM-dd-HH}=%i.log" >
+                        <!-- appender的日志级别过滤器 -->
+                        <Filters>
+                            <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                            <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+                        </Filters>
+                        <PatternLayout pattern="${warn_pattern}"></PatternLayout>
+                        <Policies>
+                            <!-- 系统启动时就触发 日志拆分规则，生成一个日志文件 -->
+<!--                            <OnStartupTriggeringPolicy></OnStartupTriggeringPolicy>-->
+                            <!-- 每个日志文件的最大大小为50 mb -->
+                            <SizeBasedTriggeringPolicy size="50 MB"></SizeBasedTriggeringPolicy>
+                            <!-- 按给定的时间节点进行拆分  -->
+                            <TimeBasedTriggeringPolicy interval="12"></TimeBasedTriggeringPolicy>
+                        </Policies>
+                        <!-- 同一个目录下，文件个数不超过100个，超过会按照时间老的进行覆盖 -->
+                        <DefaultRolloverStrategy max="100"></DefaultRolloverStrategy>
+                    </RollingFile>
+                </Route>
+            </Routes>
+        </Routing>
+
+
+        <!-- ===================== warn 级别 ↑============================== -->
+
+
+
+    </Appenders>
+
+    <Loggers>
+
+        <Logger name="error" level="error" additivity="false">
+            <appenderRef ref="error_console"></appenderRef>
+            <appenderRef ref="error_Routing"></appenderRef>
+        </Logger>
+
+        <Logger name="warn" level="warn" additivity="false">
+            <appenderRef ref="warn_console"></appenderRef>
+            <appenderRef ref="warn_Routing"></appenderRef>
+        </Logger>
+
+        <AsyncRoot level="trace" includeLocation="false">
+            <appenderRef ref="simple_console"></appenderRef>
+            <appenderRef ref="simple_Routing"></appenderRef>
+        </AsyncRoot>
+
+    </Loggers>
+
+</configuration>
