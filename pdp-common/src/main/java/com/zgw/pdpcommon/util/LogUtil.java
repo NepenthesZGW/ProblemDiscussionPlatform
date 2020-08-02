@@ -1,7 +1,15 @@
 package com.zgw.pdpcommon.util;
 
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
+import org.apache.logging.log4j.core.lookup.StrLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * @author 忘忧症
@@ -63,4 +71,28 @@ public class LogUtil {
 
     }
 
+    /**
+     *  为每个线程拥有独立的日志的插件支持
+     *  这里使用静态内部类，框架一般都不支持非静态内部类的反射实例化
+     *  另外一个原因就是静态内部类具有普通类的所有功能，内部类的设计对外部隐藏
+     *  只提供给外部类来使用
+     */
+    @Plugin(name = "thread",category = StrLookup.CATEGORY)
+    private static class ThreadLookup implements StrLookup{
+
+        @Override
+        public String lookup(String key) {
+            return Thread.currentThread().getName();
+        }
+
+        @Override
+        public String lookup(LogEvent event, String key) {
+            return event.getThreadName()==null?Thread.currentThread().getName():event.getThreadName();
+        }
+
+        @Override
+        public String toString() {
+            return "是一个Log4j2的获取当前线程名称的插件";
+        }
+    }
 }
