@@ -36,7 +36,7 @@
         <Routing name="simple_Routing">
             <Routes pattern="$${thread:threadName}">
                 <Route>
-                    <RollingFile name="rollingFile-${thread:threadName}"
+                    <RollingRandomAccessFile name="rollingFile-${thread:threadName}"
                                  fileName="${simple_log_dir}/${thread:threadName}.log"
                                  filePattern="${simple_log_dir}/$${date:yyyy-MM-dd}/${thread:threadName}=%d{yyyy-MM-dd-HH}=%i.log" >
                         <!-- appender的日志级别过滤器 -->
@@ -56,7 +56,7 @@
                         </Policies>
                         <!-- 同一个目录下，文件个数不超过100个，超过会按照时间老的进行覆盖 -->
                         <DefaultRolloverStrategy max="100"></DefaultRolloverStrategy>
-                    </RollingFile>
+                    </RollingRandomAccessFile>
                 </Route>
             </Routes>
         </Routing>
