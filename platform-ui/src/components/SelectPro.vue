@@ -8,7 +8,7 @@
             filterable
             style="width: 100%"
             :placeholder="placeholder"
-            @change="change(value)"
+            @change="change(needValue)"
     >
         <el-option
                 v-for="item in filteredList"
@@ -21,11 +21,31 @@
 </template>
 
 <script>
+    const dealList = (list,options)=>{
+        for (let i = 0; i < list.length; i++) {
+            const item = list[i]
+            if (
+                options['value']
+                && typeof options['value']  === "string"
+                && options['value'] != '')
+            {
+                item['value'] = item[options['value']]
+            }
+            if (
+                options['label']
+                && typeof options['label']  === "string"
+                && options['label'] != '')
+            {
+                item['label'] = item[options['label']]
+            }
+        }
+        return list
+    }
     export default {
         name: 'SelectPro',
         data() {
             return {
-                filteredList: [],
+                filteredList: dealList(this.initlist,this.options),
                 allData: [],
                 needValue: this.vmodel
             }
@@ -35,6 +55,12 @@
             event: 'vmodelchange'
         },
         props: {
+            initlist: {
+                type: Array,
+                default() {
+                    return []
+                }
+            },
             options: {
                 type: Object,
                 default() {
@@ -64,20 +90,29 @@
             }
         },
         watch: {
+            initlist(val) {
+              if (val === undefined) {
+                  this.filteredList = []
+              }
+              if (val == null){
+                  this.filteredList = []
+              }
+              this.mergeArray(dealList(val,this.options),this.filteredList, 'value')
+            },
             needValue(val) {
                 this.$emit('vmodelchange', val)
             },
             allData(val) {
-                this.emit('alldatachange', val)
+                this.$emit('alldatachange', val)
             },
             filteredList(val) {
-                this.emit('filteredlistchange', val)
+                this.mergeArray(val, this.allData, 'value')
+                this.$emit('filteredlistchange', val)
             }
         },
         created() {
             if (this.needValue === undefined) this.needValue = ''
             if (this.needValue == null) this.needValue = ''
-            this.remoteMethod(this.needValue)
         },
         methods: {
             dealRes(res) {
@@ -95,23 +130,7 @@
                         list = res[this.options['reskey']]
                     }
                 }
-                for (let i = 0; i < list.length; i++) {
-                    const item = list[i]
-                    if (
-                        this.options['value']
-                        && typeof this.options['value']  === "string"
-                        && this.options['value'] != '')
-                    {
-                        item['value'] = item[this.options['value']]
-                    }
-                    if (
-                        this.options['label']
-                        && typeof this.options['label']  === "string"
-                        && this.options['label'] != '')
-                    {
-                        item['label'] = item[this.options['label']]
-                    }
-                }
+                dealList(list, this.options)
                 this.filteredList = list
                 this.allData  = this.mergeArray(list, this.allData,'value');
             },
@@ -147,7 +166,6 @@
                 })
             },
             remoteMethod(query) {
-                console.log(query)
                 if (query != '') {
                     this.filteredList = this.allData.filter(item => {
                         return item.label.toLowerCase()

@@ -38,7 +38,7 @@
 
     <div>
 
-      <SelectPro v-model="haha" placeholder="请输入" :query="query"></SelectPro>
+      <SelectPro v-model="form.haha" placeholder="请输入" :query="query"></SelectPro>
     </div>
   </div>
 </template>
@@ -53,11 +53,12 @@ export default {
     return {
       activeIndex: '1',
       activeIndex2: '1',
-      haha:'选项1'
+      form:{
+      }
     };
   },
   watch: {
-    haha(val) {
+    'form.haha'(val) {
       console.log("========")
       console.log(val)
       console.log("========")
