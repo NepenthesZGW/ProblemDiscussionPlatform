@@ -38,20 +38,30 @@
 
     <div>
 
-
+      <SelectPro v-model="haha" placeholder="请输入" :query="query"></SelectPro>
     </div>
   </div>
 </template>
 
 <script>
 
+import SelectPro from "@/components/SelectPro";
 export default {
   name: 'Home',
+  components: {SelectPro},
   data() {
     return {
       activeIndex: '1',
-      activeIndex2: '1'
+      activeIndex2: '1',
+      haha:'选项1'
     };
+  },
+  watch: {
+    haha(val) {
+      console.log("========")
+      console.log(val)
+      console.log("========")
+    }
   },
   methods: {
     handleSelect(key, keyPath) {
@@ -62,6 +72,30 @@ export default {
     },
     doRecordProblem() {
       this.$router.push('/RecordProblem')
+    },
+    query(str) {
+      console.log(str)
+      return new Promise(resolve => {
+        const arr = [
+          {
+            value: '选项1',
+            label: '黄金糕'
+          }, {
+            value: '选项2',
+            label: '双皮奶'
+          }, {
+            value: '选项3',
+            label: '蚵仔煎'
+          }, {
+            value: '选项4',
+            label: '龙须面'
+          }, {
+            value: '选项5',
+            label: '北京烤鸭'
+          }
+        ]
+        resolve(arr)
+      })
     },
     member(){
 

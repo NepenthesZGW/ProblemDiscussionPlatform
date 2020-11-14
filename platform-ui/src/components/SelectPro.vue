@@ -1,13 +1,14 @@
 <template>
+<!--      @keyup.enter.native="remoteMethodByKB" -->
     <el-select
-            @keyup.enter.native="remoteMethodByKB"
-            v-model="value"
-            filterable
             remote
+            :remote-method="remoteMethod"
+            @keyup.enter.native="remoteMethodByKB"
+            v-model="needValue"
+            filterable
             style="width: 100%"
             :placeholder="placeholder"
             @change="change(value)"
-            :remote-method="remoteMethod"
     >
         <el-option
                 v-for="item in filteredList"
@@ -25,8 +26,13 @@
         data() {
             return {
                 filteredList: [],
-                allData: []
+                allData: [],
+                needValue: this.vmodel
             }
+        },
+        model: {
+            prop: 'vmodel',
+            event: 'vmodelchange'
         },
         props: {
             options: {
@@ -34,12 +40,12 @@
                 default() {
                     return {
                         reskey: '',
-                        value: 'value',
-                        label: 'label'
+                        value: '',
+                        label: ''
                     }
                 }
             },
-            value: [String],
+            vmodel: [String],
             placeholder: {
                 type: String,
                 default() {
@@ -49,7 +55,7 @@
             query: {
                 type: Function,
                 default() {
-                    return (val) => {
+                    return () => {
                         return new Promise(resolve => {
                             resolve([])
                         })
@@ -58,9 +64,20 @@
             }
         },
         watch: {
-            value(val) {
-                console.log(val)
+            needValue(val) {
+                this.$emit('vmodelchange', val)
+            },
+            allData(val) {
+                this.emit('alldatachange', val)
+            },
+            filteredList(val) {
+                this.emit('filteredlistchange', val)
             }
+        },
+        created() {
+            if (this.needValue === undefined) this.needValue = ''
+            if (this.needValue == null) this.needValue = ''
+            this.remoteMethod(this.needValue)
         },
         methods: {
             dealRes(res) {
@@ -118,15 +135,19 @@
                 let queryStr = event.target.value
                 if (queryStr === undefined) queryStr = ''
                 if (queryStr == null) queryStr = ''
-                if (queryStr != '') {
-                    this.query(queryStr).then(res => {
-                        this.dealRes(res)
-                    })
-                } else {
-                    this.filteredList = this.allData
-                }
+                // if (queryStr != '') {
+                //     this.query(queryStr).then(res => {
+                //         this.dealRes(res)
+                //     })
+                // } else {
+                //     this.filteredList = this.allData
+                // }
+                this.query(queryStr).then(res => {
+                    this.dealRes(res)
+                })
             },
             remoteMethod(query) {
+                console.log(query)
                 if (query != '') {
                     this.filteredList = this.allData.filter(item => {
                         return item.label.toLowerCase()
