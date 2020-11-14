@@ -14,5 +14,5 @@ public interface FileService<T> {
 
     ResponseResult uploadWebFileAndMetaData(MultipartFile[] files, T t);
     ResponseResult uploadImageAndCrtThumbImage(MultipartFile[] files, T t);
-    ResponseResult deleteFile(Collection<String> paths);
+    ResponseResult deleteFile(String... paths);
 }

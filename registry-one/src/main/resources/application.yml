@@ -6,8 +6,6 @@ eureka:
   client:
     register-with-eureka: false #不把自己的服务注册到eureka
     fetch-registry: false       #不拉取注册中心服务信息
-    service-url:                #设置注册中心的地址
-      defaultZone: http://root:root@localhost:8000/eureka/
 spring:
   application:
     name: registry-one          #服务名

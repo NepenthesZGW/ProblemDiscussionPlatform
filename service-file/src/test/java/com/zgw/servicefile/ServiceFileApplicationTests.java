@@ -26,13 +26,19 @@ class ServiceFileApplicationTests {
 
     @Test
     void contextLoads() throws FileNotFoundException {
-
-        File file = new File("F:/aaa.txt");
-        StorePath storePath = storageClient.uploadFile(new FileInputStream(file), file.length(), FilenameUtils.getExtension(file.getName()), createMetaData());
-        System.out.println(storePath);
+//
+//        File file = new File("F:/aaa.txt");
+//
+//        StorePath storePath = storageClient.uploadFile(new FileInputStream(file), file.length(), FilenameUtils.getExtension(file.getName()), createMetaData());
+//        System.out.println(storePath);
         //wKgvZF7ntiqANwTlAAAAESl2w3E394.txt
+        System.out.println(fileService);
+        fileService.deleteFile("aaa");
 
     }
+
+
+
     private Set<MetaData> createMetaData() {
         Set<MetaData> metaDataSet = new HashSet<>();
         metaDataSet.add(new MetaData("Author", "tobato"));

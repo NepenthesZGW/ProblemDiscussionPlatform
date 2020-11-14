@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link  rel="stylesheet" th:href="@{/css/wangEditor.min.css}">
+    <script  th:src="@{/js/wangEditor.min.js}"></script>
+    <script  th:src="@{/js/jquery-3.4.1.min.js}"></script>
+
+</head>
+<body>
+<div id="div1">
+    <p>欢迎使用 wangEditor 富文本编辑器</p>
+</div>
+
+<button id="btn1">获取html</button>
+<button id="btn2">获取text</button>
+
+</body>
+</html>
+<script type="text/javascript">
+    var E = window.wangEditor;
+    var editor = new E('#div1');
+
+    // 下面两个配置，使用其中一个即可显示“上传图片”的tab。但是两者不要同时使用！！！
+    editor.customConfig.uploadImgShowBase64 = true ;  // 使用 base64 保存图片
+    // editor.customConfig.uploadImgServer = '/upload'  // 上传图片到服务器
+
+    editor.create();
+
+    $("#btn1").click(function(){
+        var a=editor.txt.html();
+        var  data=new FormData();
+
+        data.set("html",a)
+        $.ajax({
+            url:"/upload",
+            type:"post",
+            contentType:false,//不要设置请求头
+            processData:false,//不要把我们传递的参数转成 key=value这种格式
+            data:data,
+            success:function(data){
+                window.location.href="/";
+            },
+            "error":function(e){
+            }
+        })
+
+    })
+
+</script>

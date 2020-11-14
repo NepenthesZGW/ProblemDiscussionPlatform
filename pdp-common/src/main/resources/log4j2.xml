@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<configuration status="warn" monitorInterval="1800">
+<configuration status="info" monitorInterval="1800">
     <!-- 全局属性配置  -->
     <Properties>
 
