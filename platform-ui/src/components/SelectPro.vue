@@ -1,12 +1,11 @@
 <template>
-<!--      @keyup.enter.native="remoteMethodByKB" -->
     <el-select
             remote
             :remote-method="remoteMethod"
             @keyup.enter.native="remoteMethodByKB"
             v-model="needValue"
             filterable
-            style="width: 100%"
+            :style="css"
             :placeholder="placeholder"
             @change="change(needValue)"
     >
@@ -55,6 +54,12 @@
             event: 'vmodelchange'
         },
         props: {
+            css: {
+                type: String,
+                default() {
+                    return 'width: 100%'
+                }
+            },
             initlist: {
                 type: Array,
                 default() {
