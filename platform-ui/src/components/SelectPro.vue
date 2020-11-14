@@ -1,13 +1,15 @@
 <template>
     <el-select
+            :disabled="disabled"
+            :clearable="clearable"
+            filterable
             remote
             :remote-method="remoteMethod"
             @keyup.enter.native="remoteMethodByKB"
-            v-model="needValue"
-            filterable
+            @change="change(needValue)"
             :style="css"
             :placeholder="placeholder"
-            @change="change(needValue)"
+            v-model="needValue"
     >
         <el-option
                 v-for="item in filteredList"
@@ -54,6 +56,18 @@
             event: 'vmodelchange'
         },
         props: {
+            clearable: {
+                type: Boolean,
+                default() {
+                    return false
+                }
+            },
+            disabled: {
+                type: Boolean,
+                default() {
+                    return false
+                }
+            },
             css: {
                 type: String,
                 default() {
@@ -86,7 +100,8 @@
             query: {
                 type: Function,
                 default() {
-                    return () => {
+                    return (val) => {
+                        console.log(val)
                         return new Promise(resolve => {
                             resolve([])
                         })
